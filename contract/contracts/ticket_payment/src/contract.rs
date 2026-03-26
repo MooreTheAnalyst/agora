@@ -296,6 +296,7 @@ impl TicketPaymentContract {
             change: change.clone(),
             status: ProposalStatus::Pending,
             created_at: env.ledger().timestamp(),
+            expires_at: env.ledger().timestamp() + 604800, // 7 days
             vote_count: 1, // proposer automatically votes
             voters: soroban_sdk::vec![&env, proposer.clone()],
         };
@@ -333,6 +334,10 @@ impl TicketPaymentContract {
             return Err(TicketPaymentError::ProposalNotActive);
         }
 
+        if env.ledger().timestamp() > proposal.expires_at {
+            return Err(TicketPaymentError::ProposalExpired);
+        }
+
         if proposal.voters.contains(&voter) {
             return Err(TicketPaymentError::AlreadyVoted);
         }
@@ -368,6 +373,11 @@ impl TicketPaymentContract {
         }
 
         let current_time = env.ledger().timestamp();
+
+        if current_time > proposal.expires_at {
+            return Err(TicketPaymentError::ProposalExpired);
+        }
+
         // 48 hours = 48 * 60 * 60 = 172800 seconds
         if current_time < proposal.created_at + 172800 {
             return Err(TicketPaymentError::VotingPeriodNotMet);
