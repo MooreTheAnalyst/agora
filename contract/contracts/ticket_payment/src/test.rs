@@ -5105,3 +5105,64 @@ fn test_get_payments_by_status_all_statuses() {
     let checked_in = client.get_payments_by_status(&event_id, &PaymentStatus::CheckedIn);
     assert_eq!(checked_in.len(), 0);
 }
+
+#[test]
+fn test_partial_refund_multi_batch_index_persisted() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let (client, _admin, usdc_id, _, _) = setup_test(&env);
+    let usdc_token = token::StellarAssetClient::new(&env, &usdc_id);
+
+    let event_id = String::from_str(&env, "event_1");
+    let tier_id = String::from_str(&env, "tier_1");
+    let ticket_price = 1000_0000000i128;
+    let percentage_bps = 5000u32; // 50% refund
+
+    // Set up 4 buyers and process + confirm payments
+    let mut buyers = soroban_sdk::vec![&env];
+    let pids = [
+        String::from_str(&env, "pr0"),
+        String::from_str(&env, "pr1"),
+        String::from_str(&env, "pr2"),
+        String::from_str(&env, "pr3"),
+    ];
+
+    for pid in pids.iter() {
+        let buyer = Address::generate(&env);
+        usdc_token.mint(&buyer, &ticket_price);
+        token::Client::new(&env, &usdc_id).approve(&buyer, &client.address, &ticket_price, &9999);
+        client.process_payment(
+            pid,
+            &event_id,
+            &tier_id,
+            &buyer,
+            &usdc_id,
+            &ticket_price,
+            &1,
+            &None,
+            &None,
+        );
+        client.confirm_payment(pid, &String::from_str(&env, "h"));
+        buyers.push_back(buyer);
+    }
+
+    // Batch 1: process 2 of 4
+    let count1 = client.issue_partial_refund(&event_id, &percentage_bps, &2);
+    assert_eq!(count1, 2);
+
+    // Batch 2: process next 2 (index must have been persisted from batch 1)
+    let count2 = client.issue_partial_refund(&event_id, &percentage_bps, &2);
+    assert_eq!(count2, 2);
+
+    // Batch 3: nothing left, index resets
+    let count3 = client.issue_partial_refund(&event_id, &percentage_bps, &2);
+    assert_eq!(count3, 0);
+
+    // All 4 buyers should have received 50% back
+    let expected_refund = ticket_price / 2;
+    for buyer in buyers.iter() {
+        let balance = token::Client::new(&env, &usdc_id).balance(&buyer);
+        assert_eq!(balance, expected_refund);
+    }
+}
