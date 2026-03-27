@@ -297,7 +297,7 @@ impl TicketPaymentContract {
             status: ProposalStatus::Pending,
             created_at: env.ledger().timestamp(),
             expires_at: env.ledger().timestamp() + 604800, // 7 days
-            vote_count: 1, // proposer automatically votes
+            vote_count: 1,                                 // proposer automatically votes
             voters: soroban_sdk::vec![&env, proposer.clone()],
         };
 
