@@ -984,7 +984,7 @@ fn test_register_event_refund_deadline_after_end_time_fails() {
     let result = client.try_register_event(&base_args);
     assert_eq!(
         result,
-        Err(Ok(EventRegistryError::RefundDeadlineAfterEndTime))
+        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
     );
 
     // refund_deadline > end_time should fail
@@ -995,7 +995,7 @@ fn test_register_event_refund_deadline_after_end_time_fails() {
     });
     assert_eq!(
         result,
-        Err(Ok(EventRegistryError::RefundDeadlineAfterEndTime))
+        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
     );
 
     // refund_deadline < end_time should succeed
@@ -1051,7 +1051,7 @@ fn test_register_event_target_deadline_after_end_time_fails() {
     let result = client.try_register_event(&base_args);
     assert_eq!(
         result,
-        Err(Ok(EventRegistryError::TargetDeadlineAfterEndTime))
+        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
     );
 
     // target_deadline > end_time should fail
@@ -1062,7 +1062,7 @@ fn test_register_event_target_deadline_after_end_time_fails() {
     });
     assert_eq!(
         result,
-        Err(Ok(EventRegistryError::TargetDeadlineAfterEndTime))
+        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
     );
 
     // target_deadline < end_time should succeed

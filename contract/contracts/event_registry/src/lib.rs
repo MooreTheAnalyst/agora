@@ -91,9 +91,9 @@ use crate::events::{
     EventRegisteredEvent, EventStatusUpdatedEvent, EventsSuspendedEvent, FeeUpdatedEvent,
     FeedbackCidSetEvent, GlobalPromoUpdatedEvent, GoalMetEvent, InitializationEvent,
     InventoryIncrementedEvent, LoyaltyScoreUpdatedEvent, MetadataUpdatedEvent,
-    OrganizerBlacklistedEvent, OrganizerRemovedFromBlacklistEvent, RegistryUpgradedEvent,
-    ScannerAuthorizedEvent, StakerRewardsClaimedEvent, StakerRewardsDistributedEvent,
-    TokenWhitelistUpdatedEvent, ProposalCancelledEvent,
+    OrganizerBlacklistedEvent, OrganizerRemovedFromBlacklistEvent, ProposalCancelledEvent,
+    RegistryUpgradedEvent, ScannerAuthorizedEvent, StakerRewardsClaimedEvent,
+    StakerRewardsDistributedEvent, TokenWhitelistUpdatedEvent,
 };
 use crate::types::{
     BlacklistAuditEntry, EventInfo, EventReceipt, EventRegistrationArgs, EventStatus, GuestProfile,
@@ -378,11 +378,11 @@ impl EventRegistry {
         // Validate timestamp consistency: deadlines must be before end_time when end_time is set
         if args.end_time > 0 {
             if args.refund_deadline > 0 && args.refund_deadline >= args.end_time {
-                return Err(EventRegistryError::RefundDeadlineAfterEndTime);
+                return Err(EventRegistryError::DeadlineAfterEndTime);
             }
             if let Some(td) = args.target_deadline {
                 if td >= args.end_time {
-                    return Err(EventRegistryError::TargetDeadlineAfterEndTime);
+                    return Err(EventRegistryError::DeadlineAfterEndTime);
                 }
             }
         }

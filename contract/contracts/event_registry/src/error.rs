@@ -78,10 +78,8 @@ pub enum EventRegistryError {
     PerUserLimitExceeded = 48,
     /// Proposal has already been cancelled
     ProposalAlreadyCancelled = 49,
-    /// refund_deadline must be before end_time when end_time is set
-    RefundDeadlineAfterEndTime = 50,
-    /// target_deadline must be before end_time when end_time is set
-    TargetDeadlineAfterEndTime = 51,
+    /// refund_deadline or target_deadline must be before end_time when end_time is set
+    DeadlineAfterEndTime = 50,
 }
 
 impl core::fmt::Display for EventRegistryError {
@@ -241,11 +239,8 @@ impl core::fmt::Display for EventRegistryError {
             EventRegistryError::ProposalAlreadyCancelled => {
                 write!(f, "Proposal has already been cancelled")
             }
-            EventRegistryError::RefundDeadlineAfterEndTime => {
-                write!(f, "refund_deadline must be before end_time")
-            }
-            EventRegistryError::TargetDeadlineAfterEndTime => {
-                write!(f, "target_deadline must be before end_time")
+            EventRegistryError::DeadlineAfterEndTime => {
+                write!(f, "refund_deadline and target_deadline must be before end_time")
             }
         }
     }
