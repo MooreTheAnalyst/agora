@@ -3347,7 +3347,10 @@ fn test_cancel_event_success() {
         use_global_whitelist: true,
     });
 
-    client.cancel_event(&event_id, &Some(String::from_str(&env, "Venue unavailable")));
+    client.cancel_event(
+        &event_id,
+        &Some(String::from_str(&env, "Venue unavailable")),
+    );
 
     let event_info = client.get_event(&event_id).unwrap();
     assert_eq!(event_info.status, EventStatus::Cancelled);
@@ -3495,7 +3498,7 @@ fn test_update_status_on_cancelled_event_fails() {
         use_global_whitelist: true,
     });
 
-    client.cancel_event(&event_id);
+    client.cancel_event(&event_id, &None);
     let result = client.try_update_event_status(&event_id, &true);
     assert_eq!(result, Err(Ok(EventRegistryError::EventCancelled)));
 }
@@ -4918,7 +4921,7 @@ fn test_cancelled_status_guard() {
     });
 
     // Cancel event
-    client.cancel_event(&event_id);
+    client.cancel_event(&event_id, &None);
 
     // Try to update status - should fail
     let result = client.try_update_event_status(&event_id, &true);
@@ -6434,7 +6437,7 @@ fn test_set_feedback_cid_cancelled_event_fails() {
     setup_event_with_end_time_no_init(&env, &client, &organizer, "evt_cancelled", 500);
 
     let event_id = String::from_str(&env, "evt_cancelled");
-    client.cancel_event(&event_id);
+    client.cancel_event(&event_id, &None);
 
     let result = client.try_set_feedback_cid(
         &event_id,
