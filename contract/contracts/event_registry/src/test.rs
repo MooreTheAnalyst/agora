@@ -328,6 +328,7 @@ fn test_storage_operations() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     };
 
     client.store_event(&event_info);
@@ -427,6 +428,7 @@ fn test_get_total_tickets_sold_uses_event_current_supply() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     });
 
     assert_eq!(client.get_total_tickets_sold(&event_id), 9);
@@ -486,7 +488,7 @@ fn test_get_active_events_count_tracks_status_changes() {
     client.update_event_status(&event_1, &false);
     assert_eq!(client.get_active_events_count(), 2);
 
-    client.cancel_event(&event_2);
+    client.cancel_event(&event_2, &None);
     assert_eq!(client.get_active_events_count(), 1);
 
     client.update_event_status(&event_1, &true);
@@ -543,6 +545,7 @@ fn test_organizer_events_list() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     };
 
     let event_2 = EventInfo {
@@ -580,6 +583,7 @@ fn test_organizer_events_list() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     };
 
     let contract_id = env.register(EventRegistry, ());
@@ -644,6 +648,7 @@ fn test_get_organizer_receipts_returns_archived_receipts() {
             accepted_tokens: soroban_sdk::Vec::new(&env),
             use_global_whitelist: true,
             feedback_cid: None,
+            cancellation_reason: None,
         };
 
     let event_id_1 = String::from_str(&env, "archived_1");
@@ -2600,6 +2605,7 @@ fn test_increment_inventory_supply_overflow() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     });
 
     let result = client.try_increment_inventory(&event_id, &tier_id, &Address::generate(&env), &1);
@@ -2676,6 +2682,7 @@ fn test_increment_inventory_tier_sold_overflow() {
         accepted_tokens: soroban_sdk::Vec::new(&env),
         use_global_whitelist: true,
         feedback_cid: None,
+        cancellation_reason: None,
     });
 
     let result = client.try_increment_inventory(&event_id, &tier_id, &Address::generate(&env), &1);
@@ -3340,11 +3347,15 @@ fn test_cancel_event_success() {
         use_global_whitelist: true,
     });
 
-    client.cancel_event(&event_id);
+    client.cancel_event(&event_id, &Some(String::from_str(&env, "Venue unavailable")));
 
     let event_info = client.get_event(&event_id).unwrap();
     assert_eq!(event_info.status, EventStatus::Cancelled);
     assert!(!event_info.is_active);
+    assert_eq!(
+        event_info.cancellation_reason,
+        Some(String::from_str(&env, "Venue unavailable"))
+    );
 }
 
 #[test]
@@ -3436,8 +3447,8 @@ fn test_cancel_already_cancelled_fails() {
         use_global_whitelist: true,
     });
 
-    client.cancel_event(&event_id);
-    let result = client.try_cancel_event(&event_id);
+    client.cancel_event(&event_id, &None);
+    let result = client.try_cancel_event(&event_id, &None);
     assert_eq!(result, Err(Ok(EventRegistryError::EventAlreadyCancelled)));
 }
 

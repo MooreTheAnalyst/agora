@@ -75,6 +75,8 @@ pub struct EventCancelledEvent {
     pub cancelled_by: Address,
     /// The ledger timestamp when the cancellation occurred.
     pub timestamp: u64,
+    /// Optional human-readable reason for the cancellation.
+    pub reason: Option<String>,
 }
 
 /// Emitted when an event is archived and its full storage is reclaimed.

@@ -161,6 +161,8 @@ pub struct EventInfo {
     pub use_global_whitelist: bool,
     /// Optional IPFS CID for post-event feedback (only settable after end_time)
     pub feedback_cid: Option<String>,
+    /// Optional human-readable reason provided when the event was cancelled
+    pub cancellation_reason: Option<String>,
 }
 
 /// Payment information for an event

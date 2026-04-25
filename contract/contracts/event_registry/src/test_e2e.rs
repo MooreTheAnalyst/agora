@@ -109,7 +109,7 @@ fn test_e2e_complete_event_lifecycle() {
     assert!(info.is_active);
 
     // Cancel (irreversible)
-    client.cancel_event(&String::from_str(&env, "evt_1"));
+    client.cancel_event(&String::from_str(&env, "evt_1"), &None);
     let info = client.get_event(&String::from_str(&env, "evt_1")).unwrap();
     assert!(!info.is_active);
     assert_eq!(info.status, EventStatus::Cancelled);
@@ -119,7 +119,7 @@ fn test_e2e_complete_event_lifecycle() {
     assert_eq!(result, Err(Ok(EventRegistryError::EventCancelled)));
 
     // Cancel again should fail
-    let result = client.try_cancel_event(&String::from_str(&env, "evt_1"));
+    let result = client.try_cancel_event(&String::from_str(&env, "evt_1"), &None);
     assert_eq!(result, Err(Ok(EventRegistryError::EventAlreadyCancelled)));
 }
 
