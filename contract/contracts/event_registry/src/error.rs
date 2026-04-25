@@ -240,7 +240,10 @@ impl core::fmt::Display for EventRegistryError {
                 write!(f, "Proposal has already been cancelled")
             }
             EventRegistryError::DeadlineAfterEndTime => {
-                write!(f, "refund_deadline and target_deadline must be before end_time")
+                write!(
+                    f,
+                    "refund_deadline and target_deadline must be before end_time"
+                )
             }
         }
     }

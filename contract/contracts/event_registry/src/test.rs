@@ -982,10 +982,7 @@ fn test_register_event_refund_deadline_after_end_time_fails() {
 
     // refund_deadline == end_time should fail
     let result = client.try_register_event(&base_args);
-    assert_eq!(
-        result,
-        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
-    );
+    assert_eq!(result, Err(Ok(EventRegistryError::DeadlineAfterEndTime)));
 
     // refund_deadline > end_time should fail
     let result = client.try_register_event(&EventRegistrationArgs {
@@ -993,10 +990,7 @@ fn test_register_event_refund_deadline_after_end_time_fails() {
         refund_deadline: 6000,
         ..base_args.clone()
     });
-    assert_eq!(
-        result,
-        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
-    );
+    assert_eq!(result, Err(Ok(EventRegistryError::DeadlineAfterEndTime)));
 
     // refund_deadline < end_time should succeed
     client.register_event(&EventRegistrationArgs {
@@ -1049,10 +1043,7 @@ fn test_register_event_target_deadline_after_end_time_fails() {
 
     // target_deadline == end_time should fail
     let result = client.try_register_event(&base_args);
-    assert_eq!(
-        result,
-        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
-    );
+    assert_eq!(result, Err(Ok(EventRegistryError::DeadlineAfterEndTime)));
 
     // target_deadline > end_time should fail
     let result = client.try_register_event(&EventRegistrationArgs {
@@ -1060,10 +1051,7 @@ fn test_register_event_target_deadline_after_end_time_fails() {
         target_deadline: Some(6000),
         ..base_args.clone()
     });
-    assert_eq!(
-        result,
-        Err(Ok(EventRegistryError::DeadlineAfterEndTime))
-    );
+    assert_eq!(result, Err(Ok(EventRegistryError::DeadlineAfterEndTime)));
 
     // target_deadline < end_time should succeed
     client.register_event(&EventRegistrationArgs {
