@@ -6,7 +6,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://agora-web-eta.verc
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const events = await prisma.event.findMany({ select: { id: true, updatedAt: true } });
 
-  const eventEntries: MetadataRoute.Sitemap = events.map((e) => ({
+  const eventEntries: MetadataRoute.Sitemap = events.map((e: { id: string; updatedAt: Date }) => ({
     url: `${BASE_URL}/events/${e.id}`,
     lastModified: e.updatedAt,
     changeFrequency: "weekly",

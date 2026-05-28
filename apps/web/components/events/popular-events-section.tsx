@@ -206,9 +206,7 @@ export function PopularEventsSection({ onError }: PopularEventsSectionProps) {
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
               <Button
-                backgroundColor="bg-black"
-                shadowColor="transparent"
-                textColor="text-white"
+                variant="dark"
                 className="border-none sm:rounded-4xl! max-sm:p-0 h-9.75 sm:w-34 w-9.75"
                 onClick={() => setIsFilterOpen(true)}
                 aria-haspopup="dialog"
@@ -290,8 +288,7 @@ export function PopularEventsSection({ onError }: PopularEventsSectionProps) {
           whileTap={{ scale: 0.97 }}
         >
           <Button
-            backgroundColor="bg-accent"
-            shadowColor="transparent"
+            variant="primary"
             className="border-none rounded-[13px]! h-11"
           >
             View all Events

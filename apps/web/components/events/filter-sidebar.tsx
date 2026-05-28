@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 // ─── Category options ────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -383,21 +384,13 @@ export function FilterSidebar({
 
             {/* ── Footer CTA ── */}
             <div className="px-6 py-5 border-t border-black/10 shrink-0">
-              <button
-                type="button"
-                onClick={handleApply}
-                className="
-                  w-full h-12 rounded-[13px] bg-black text-white font-semibold text-[15px]
-                  shadow-[-4px_4px_0px_0px_rgba(0,0,0,0.25)]
-                  border border-black
-                  hover:-translate-x-[2px] hover:translate-y-[2px]
-                  hover:shadow-[-2px_2px_0px_0px_rgba(0,0,0,0.25)]
-                  active:-translate-x-[4px] active:translate-y-[4px] active:shadow-none
-                  transition-all
-                "
-              >
-                Apply Filters
-              </button>
+            <Button
+              variant="dark"
+              onClick={handleApply}
+              className="w-full h-12 rounded-[13px] text-[15px]"
+            >
+              Apply Filters
+            </Button>
             </div>
           </motion.aside>
         </>
