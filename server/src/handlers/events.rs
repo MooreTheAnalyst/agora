@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //! # Event Handlers
 //!
 //! This module provides HTTP handlers for event-related operations including
