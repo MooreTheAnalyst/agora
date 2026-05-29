@@ -894,3 +894,48 @@ pub async fn get_checkin_stats(
         Err(e) => AppError::InternalServerError(e.to_string()).into_response(),
     }
 }
+
+/// Response for the ratings summary endpoint.
+#[derive(Debug, Serialize)]
+pub struct RatingsSummaryResponse {
+    pub event_id: Uuid,
+    pub average_rating: Option<f32>,
+    pub count_of_ratings: i32,
+    pub sum_of_ratings: i64,
+}
+
+/// Get the ratings summary for an event.
+///
+/// # Endpoint
+/// GET `/api/v1/events/:id/ratings/summary`
+pub async fn get_ratings_summary(
+    State(state): State<EventState>,
+    Path(event_id): Path<Uuid>,
+) -> Response {
+    let event = match sqlx::query_as::<_, Event>(
+        "SELECT * FROM events WHERE id = $1 AND is_flagged = FALSE",
+    )
+    .bind(event_id)
+    .fetch_optional(&state.pool)
+    .await
+    {
+        Ok(Some(event)) => event,
+        Ok(None) => {
+            return AppError::NotFound(format!("Event with id '{}' not found", event_id))
+                .into_response();
+        }
+        Err(e) => {
+            tracing::error!("Failed to fetch event for ratings summary: {:?}", e);
+            return AppError::DatabaseError(e).into_response();
+        }
+    };
+
+    let response = RatingsSummaryResponse {
+        event_id: event.id,
+        average_rating: event.average_rating(),
+        count_of_ratings: event.count_of_ratings,
+        sum_of_ratings: event.sum_of_ratings,
+    };
+
+    success(response, "Ratings summary retrieved successfully").into_response()
+}
