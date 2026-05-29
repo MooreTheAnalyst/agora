@@ -766,7 +766,7 @@ pub struct CheckInStats {
 }
 
 /// Response body for the ratings summary endpoint
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct RatingsSummary {
     pub average: f64,
     pub total: i64,
