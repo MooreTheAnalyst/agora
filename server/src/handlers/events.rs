@@ -885,7 +885,11 @@ pub async fn get_checkin_stats(
             let checked_in = r.checked_in.unwrap_or(0);
             let total_sold = r.total_sold.unwrap_or(0);
             success(
-                CheckInStats { checked_in, total_sold, remaining: total_sold - checked_in },
+                CheckInStats {
+                    checked_in,
+                    total_sold,
+                    remaining: total_sold - checked_in,
+                },
                 "Check-in stats retrieved",
             )
             .into_response()
