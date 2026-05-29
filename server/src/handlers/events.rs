@@ -725,7 +725,11 @@ mod tests {
 
     #[test]
     fn test_sold_out_status_when_minted_equals_total() {
-        let status = SoldOutStatus { is_sold_out: 500 >= 500, minted: 500, total: 500 };
+        let status = SoldOutStatus {
+            is_sold_out: 500 >= 500,
+            minted: 500,
+            total: 500,
+        };
         assert!(status.is_sold_out);
         assert_eq!(status.minted, 500);
         assert_eq!(status.total, 500);
@@ -733,14 +737,22 @@ mod tests {
 
     #[test]
     fn test_sold_out_status_when_not_sold_out() {
-        let status = SoldOutStatus { is_sold_out: 100 >= 500, minted: 100, total: 500 };
+        let status = SoldOutStatus {
+            is_sold_out: 100 >= 500,
+            minted: 100,
+            total: 500,
+        };
         assert!(!status.is_sold_out);
     }
 
     #[test]
     fn test_sold_out_status_when_minted_exceeds_total() {
         // Edge case: minted > total (e.g. after a refund reversal)
-        let status = SoldOutStatus { is_sold_out: 501 >= 500, minted: 501, total: 500 };
+        let status = SoldOutStatus {
+            is_sold_out: 501 >= 500,
+            minted: 501,
+            total: 500,
+        };
         assert!(status.is_sold_out);
     }
 }
@@ -774,7 +786,9 @@ pub async fn get_sold_out_status(
     let cache_key = format!("event:sold_out:{}", event_id);
 
     match state.redis.get::<SoldOutStatus>(&cache_key).await {
-        Ok(Some(status)) => return success(status, "Sold-out status retrieved (cached)").into_response(),
+        Ok(Some(status)) => {
+            return success(status, "Sold-out status retrieved (cached)").into_response()
+        }
         Ok(None) => {}
         Err(e) => tracing::warn!("Redis error for sold-out cache: {:?}", e),
     }
@@ -804,8 +818,16 @@ pub async fn get_sold_out_status(
         total,
     };
 
-    if let Err(e) = state.redis.set(&cache_key, &status, SOLD_OUT_CACHE_TTL).await {
-        tracing::warn!("Failed to cache sold-out status for event {}: {:?}", event_id, e);
+    if let Err(e) = state
+        .redis
+        .set(&cache_key, &status, SOLD_OUT_CACHE_TTL)
+        .await
+    {
+        tracing::warn!(
+            "Failed to cache sold-out status for event {}: {:?}",
+            event_id,
+            e
+        );
     }
 
     success(status, "Sold-out status retrieved").into_response()
@@ -834,7 +856,11 @@ pub async fn get_checkin_stats(
             let checked_in = r.checked_in.unwrap_or(0);
             let total_sold = r.total_sold.unwrap_or(0);
             success(
-                CheckInStats { checked_in, total_sold, remaining: total_sold - checked_in },
+                CheckInStats {
+                    checked_in,
+                    total_sold,
+                    remaining: total_sold - checked_in,
+                },
                 "Check-in stats retrieved",
             )
             .into_response()
